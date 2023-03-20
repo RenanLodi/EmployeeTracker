@@ -6,6 +6,7 @@ const cTable = require('console.table');
 const db = mysql.createConnection(
     {
       host: 'localhost',
+      port: 3001,
       user: 'root',
       password: '',
       database: 'employee_db',
@@ -89,7 +90,7 @@ showDepartments = () => {
   console.log('Showing all departments');
   const sql = `SELECT department.id AS id, department.name AS department FROM department`; 
 
-  db.promise().query(sql, (err, rows) => {
+  db.query(sql, (err, rows) => {
     if (err) throw err;
     console.table(rows);
     startMenu();
@@ -103,7 +104,7 @@ showDepartments = () => {
                FROM role
                INNER JOIN department ON role.department_id = department.id`;
   
-  db.promise().query(sql, (err, rows) => {
+  db.query(sql, (err, rows) => {
     if (err) throw err; 
     console.table(rows);
         startMenu();
@@ -124,7 +125,7 @@ showDepartments = () => {
                           LEFT JOIN department ON role.department_id = department.id
                           LEFT JOIN employee manager ON employee.manager_id = manager.id`;
     
-    db.promise().query(sql, (err, rows) => {
+    db.query(sql, (err, rows) => {
         if (err) throw err; 
         console.table(rows);
             startMenu();
@@ -143,7 +144,7 @@ showDepartments = () => {
           .then(answer => {
             const sql = `INSERT INTO department (name)
             VALUES (?)`;
-            db.promise().query(sql, answer.department, (err, _result) => {
+            db().query(sql, answer.department, (err, _result) => {
             if (err) throw err;
                 console.log('Department added!');
                 showDepartments();
@@ -220,7 +221,7 @@ showDepartments = () => {
       
       function updateEmployeeManager () {
         const employeeSql = 'SELECT *  FROM employee';
-        db.promise().query(employeeSql, (err, data) => {
+        db.query(employeeSql, (err, data) => {
           if (err) throw err;
           const employees = data.map(({ id, first_name, last_name }) => ({ name: first_name + " "+ last_name, value: id }));
         })
@@ -238,7 +239,7 @@ showDepartments = () => {
                 params.push(employee);
                 
         const managerSql = 'SELECT *  FROM employee';
-        db.promise().query(managerSql, (err, data) => {
+        db.query(managerSql, (err, data) => {
           if (err) throw err;
           const managers = data.map(({ id, first_name, last_name }) => ({ name: first_name + " "+ last_name, value: id }));
         })
@@ -279,7 +280,7 @@ function viewEmployeeDepartment() {
                FROM employee 
                LEFT JOIN role ON employee.role_id = role.id 
                LEFT JOIN department ON role.department_id = department.id`;
-    db.promise().query(sql, (err,rows) =>{
+    db.query(sql, (err,rows) =>{
       if (err) throw err;
       console.table(rows);
       startMenu();
@@ -294,7 +295,7 @@ function viewEmployeeManager() {
                FROM employee 
                LEFT JOIN role ON employee.role_id = role.id 
                LEFT JOIN manager ON role.manager_id = manager.id`;
-    db.promise().query(sql, (err,rows) =>{
+    db.query(sql, (err,rows) =>{
       if (err) throw err;
       console.table(rows);
       startMenu();
@@ -304,7 +305,7 @@ function viewEmployeeManager() {
 
     function deleteDepartment() {
       const deptSql = 'SELECT * FROM Department';
-      db.promise().query(deptSql, (err, data) =>{
+      db.query(deptSql, (err, data) =>{
         if (err) throw err; 
 
     const dept = data.map(({ name, id }) => ({ name: name, value: id }));
@@ -334,7 +335,7 @@ function viewEmployeeManager() {
     function deleteRole() {
       const roleSql = `SELECT * FROM role`; 
 
-  db.promise().query(roleSql, (err, data) => {
+  db.query(roleSql, (err, data) => {
     if (err) throw err; 
 
     const role = data.map(({ title, id }) => ({ name: title, value: id }));
@@ -367,7 +368,7 @@ function viewEmployeeManager() {
     function deleteEmployee() {
       const employeeSql = `SELECT * FROM employee`; 
 
-      db.promise().query(employeeSql, (err, data) => {
+      db.query(employeeSql, (err, data) => {
         if (err) throw err; 
     
         const employee = data.map(({ title, id }) => ({ name: title, value: id }));
@@ -405,7 +406,7 @@ function viewEmployeeManager() {
                      FROM  role  
                      JOIN department ON role.department_id = department.id GROUP BY  department_id`;
         
-        db.promise().query(sql, (err, rows) => {
+        db.query(sql, (err, rows) => {
           if (err) throw err; 
           console.table(rows);
       
